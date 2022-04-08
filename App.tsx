@@ -14,7 +14,7 @@ export default function App() {
     Bold: Epilogue_700Bold,
   });
 
-  if (!loadedFonts) return;
+  if (!loadedFonts) return null;
 
   return (
     <ThemeProvider theme={light}>

@@ -1,7 +1,8 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { ListContainer, Wrapper } from './styles';
+import { Wrapper } from './styles';
 import { FormContainer } from '../../layouts/FormContainer';
+import { ListContainer } from '../../layouts/ListContainer';
 
 export default function Home() {
   return (
