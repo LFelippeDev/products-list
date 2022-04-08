@@ -1076,6 +1076,11 @@
   resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.5.tgz#77211291c1900a700b8a78cfafda3160d76949ed"
   integrity sha512-OWORNpfjMsSSUBVrRBVGECkhWcULOAJz9ZW8uK9qgxD+87M7jHRcvh/A96XXNhXTLmKcoYSQtBEX7lHMO7YRwg==
 
+"@expo-google-fonts/epilogue@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@expo-google-fonts/epilogue/-/epilogue-0.2.2.tgz#cdf63fa3dc718753170b610d4df0c954b2b17082"
+  integrity sha512-NYQEFGXDHoeRZ+gqqbwTEwyOY/qW2imYPzqO+YKxw4y5nHBwMU5yI2izlT+gbduH8T+Tu1jgh8IR9HmqUdpJUQ==
+
 "@expo/config-plugins@4.0.6":
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/@expo/config-plugins/-/config-plugins-4.0.6.tgz#ef52f0e4d96ddd52b4cd4cc8c6efbe3d9576c72d"

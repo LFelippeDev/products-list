@@ -10,6 +10,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@expo-google-fonts/epilogue": "^0.2.2",
     "@types/styled-components": "^5.1.25",
     "expo": "~44.0.0",
     "expo-status-bar": "~1.2.0",

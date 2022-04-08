@@ -14,10 +14,12 @@ export const ContainerTitle = styled(Text)`
   font-size: 24px;
   margin-bottom: 10px;
   color: ${({ theme }) => theme.colors.principal_text};
+  font-family: 'Bold';
 `;
 export const ContainerSubTitle = styled(Text)`
   font-size: 16px;
   color: ${({ theme }) => theme.colors.principal_text};
+  font-family: 'Medium';
 `;
 
 export const ContainerFooter = styled(View)`
@@ -41,4 +43,6 @@ export const Button = styled(TouchableOpacity)`
 
 export const TextButton = styled(Text)`
   color: ${({ theme }) => theme.colors.white};
+  font-size: 16px;
+  font-family: 'Medium';
 `;

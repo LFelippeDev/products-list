@@ -18,4 +18,5 @@ export const Label = styled(Text)`
   font-size: 12px;
   color: ${({ theme }) => theme.colors.input_label};
   margin-bottom: 3px;
+  font-family: 'Medium';
 `;
