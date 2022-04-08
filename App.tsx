@@ -1,7 +1,7 @@
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
-import Home from './pages/Home';
-import { light } from './styles/themes';
+import Home from './src/pages/Home';
+import { light } from './src/styles/themes';
 
 export default function App() {
   return (

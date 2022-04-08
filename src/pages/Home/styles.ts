@@ -7,12 +7,8 @@ export const Wrapper = styled(View)`
   display: flex;
 `;
 
-export const FormContainer = styled(View)`
-  flex: 0.45;
-`;
-
 export const ListContainer = styled(View)`
-  flex: 0.55;
+  flex: 1;
   background: ${({ theme }) => theme.colors.secundary_orange};
   border-top-right-radius: 50px;
   border-top-left-radius: 50px;
