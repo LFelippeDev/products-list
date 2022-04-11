@@ -7,6 +7,8 @@ interface IFormInputProps {
   placeholder?: string;
   keyboardType?: KeyboardTypeOptions;
   maxLenght?: number;
+  isInvalid?: boolean;
+  onChangeText?: (value: string) => void;
 }
 
 export const FormInput = ({
@@ -14,6 +16,8 @@ export const FormInput = ({
   placeholder,
   keyboardType,
   maxLenght,
+  onChangeText,
+  isInvalid,
 }: IFormInputProps) => {
   return (
     <Container>
@@ -22,6 +26,8 @@ export const FormInput = ({
         keyboardType={keyboardType}
         placeholder={placeholder}
         maxLength={maxLenght}
+        onChangeText={onChangeText}
+        isInvalid={isInvalid}
       />
     </Container>
   );
