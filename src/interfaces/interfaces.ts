@@ -3,6 +3,7 @@ export interface IProduto {
   nome: string;
   preco: number;
   estoque: number;
+  precoTotal: number;
 }
 
 export enum IOrderList {
@@ -12,4 +13,23 @@ export enum IOrderList {
   preco = 'Preço',
   estoque = 'Estoque',
   precoTotal = 'Preço Total',
+}
+
+export interface IProdutoNotCompleted {
+  nome: string;
+  preco: number;
+  precoTotal: number;
+  estoque: number;
+}
+
+export interface IProductsContext {
+  productsList?: IProduto[];
+  deleteProduct: (id: number) => void;
+  createProduct: (product: IProdutoNotCompleted) => void;
+  updateProduct: (product: IProduto) => void;
+}
+
+export interface IField {
+  value: string | number;
+  isInvalid: boolean;
 }
