@@ -16,12 +16,6 @@ import {
   TextButton,
 } from './styles';
 
-const VALIDATE_FIELDS = {
-  nome: { isInvalid: false },
-  estoque: { isInvalid: false },
-  preco: { isInvalid: false },
-};
-
 export const FormContainer = () => {
   const { createProduct } = useProducts();
   const [newNome, setNewNome] = useState<IField>({
