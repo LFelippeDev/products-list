@@ -1,11 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { FormInput } from '../../components/FormInput';
 import { useProducts } from '../../context/products';
-import {
-  IField,
-  IProduto,
-  IProdutoNotCompleted,
-} from '../../interfaces/interfaces';
+import { IField, IProdutoNotCompleted } from '../../interfaces/interfaces';
 import {
   Button,
   ButtonContainer,
@@ -17,7 +13,7 @@ import {
 } from './styles';
 
 export const FormContainer = () => {
-  const { createProduct } = useProducts();
+  const { createProduct, setSearchFilter, filteredList } = useProducts();
   const [newNome, setNewNome] = useState<IField>({
     value: '',
     isInvalid: false,
@@ -30,6 +26,7 @@ export const FormContainer = () => {
     value: 0,
     isInvalid: false,
   });
+  const inSearching = !filteredList;
 
   const validateNewProduct = useCallback(():
     | IProdutoNotCompleted
@@ -65,42 +62,49 @@ export const FormContainer = () => {
   );
 
   return (
-    <Container>
+    <Container inSearching={inSearching}>
       <ContainerTitle>Lista de Produtos</ContainerTitle>
       <FormInput
         placeholder="Pesquise um produto"
-        onChangeText={(value) => {}}
+        onChangeText={setSearchFilter}
       />
-      <ContainerSubTitle>Novo Produto</ContainerSubTitle>
-      <FormInput
-        label="Nome"
-        placeholder="Digite um nome"
-        onChangeText={(value) => handleFieldValue(setNewNome, value)}
-        isInvalid={newNome.isInvalid}
-      />
-      <ContainerFooter>
-        <FormInput
-          label="Quantidade em Estoque"
-          placeholder="Estoque"
-          keyboardType="numeric"
-          onChangeText={(value) =>
-            handleFieldValue(setNewEstoque, Number(value))
-          }
-          isInvalid={newEstoque.isInvalid}
-        />
-        <FormInput
-          label="Preço"
-          placeholder="R$"
-          keyboardType="numeric"
-          onChangeText={(value) => handleFieldValue(setNewPreco, Number(value))}
-          isInvalid={newPreco.isInvalid}
-        />
-      </ContainerFooter>
-      <ButtonContainer>
-        <Button onPress={addNewProduct}>
-          <TextButton>Novo Produto</TextButton>
-        </Button>
-      </ButtonContainer>
+      {inSearching && (
+        <>
+          <ContainerSubTitle>Novo Produto</ContainerSubTitle>
+          <FormInput
+            label="Nome"
+            placeholder="Digite um nome"
+            onChangeText={(value) => handleFieldValue(setNewNome, value)}
+            isInvalid={newNome.isInvalid}
+          />
+          <ContainerFooter>
+            <FormInput
+              label="Quantidade em Estoque"
+              placeholder="Estoque"
+              keyboardType="numeric"
+              onChangeText={(value) =>
+                handleFieldValue(setNewEstoque, Number(value))
+              }
+              isInvalid={newEstoque.isInvalid}
+            />
+            <FormInput
+              label="Preço"
+              placeholder="R$"
+              keyboardType="numeric"
+              onChangeText={(value) =>
+                handleFieldValue(setNewPreco, Number(value))
+              }
+              isInvalid={newPreco.isInvalid}
+            />
+          </ContainerFooter>
+
+          <ButtonContainer>
+            <Button onPress={addNewProduct}>
+              <TextButton>Novo Produto</TextButton>
+            </Button>
+          </ButtonContainer>
+        </>
+      )}
     </Container>
   );
 };

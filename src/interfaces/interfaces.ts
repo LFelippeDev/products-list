@@ -24,9 +24,11 @@ export interface IProdutoNotCompleted {
 
 export interface IProductsContext {
   productsList?: IProduto[];
+  filteredList?: IProduto[];
   deleteProduct: (id: number) => void;
   createProduct: (product: IProdutoNotCompleted) => void;
   updateProduct: (product: IProduto) => void;
+  setSearchFilter: (value: string) => void;
 }
 
 export interface IField {

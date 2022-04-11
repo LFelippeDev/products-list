@@ -1,8 +1,12 @@
 import styled from 'styled-components';
 import { View, Text, TouchableOpacity, StatusBar } from 'react-native';
 
-export const Container = styled(View)`
-  min-height: 370px;
+interface IContainer {
+  inSearching: boolean;
+}
+
+export const Container = styled(View)<IContainer>`
+  min-height: ${({ inSearching }) => (inSearching ? '370' : '120')}px;
   padding: 25px;
   padding-top: 0;
   margin-top: ${StatusBar.currentHeight}px;
