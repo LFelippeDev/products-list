@@ -1,17 +1,41 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { IProduto } from '../../interfaces/interfaces';
-import { Image } from 'react-native';
 import { Incrementor } from '../Incrementor';
 import { CardText, Container, Divisor, Footer, Header, Main } from './styles';
 import { light } from '../../styles/themes';
+import { useProducts } from '../../context/products';
+import { Alert } from 'react-native';
 
 interface IProductCardProps {
   produto: IProduto;
 }
 
 export const ProductCard = ({ produto }: IProductCardProps) => {
-  const { id, nome, preco, estoque } = produto;
-  const totalPrice = (estoque * preco).toFixed(2);
+  const { deleteProduct, updateProduct, productsList } = useProducts();
+  const [updateEstoqueProduct, setUpdateEstoqueProduct] =
+    useState<IProduto>(produto);
+  const { id, nome, estoque, preco, precoTotal } = updateEstoqueProduct;
+  const handleDeleteProduct = useCallback(() => {
+    Alert.alert(
+      'Excluir produto',
+      'Tem certeza de que deseja excluir este produto?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Excluir',
+          onPress: () => deleteProduct(id),
+          style: 'destructive',
+        },
+      ]
+    );
+  }, [deleteProduct, id]);
+
+  useEffect(() => {
+    updateProduct(updateEstoqueProduct);
+  }, [estoque]);
 
   return (
     <Container>
@@ -23,6 +47,7 @@ export const ProductCard = ({ produto }: IProductCardProps) => {
           fontFamily="Medium"
           fontSize={12}
           color={light.colors.delete_product_text}
+          onPress={() => handleDeleteProduct()}
         >
           Excluir Produto
         </CardText>
@@ -37,13 +62,24 @@ export const ProductCard = ({ produto }: IProductCardProps) => {
       </Main>
       <Divisor />
       <Footer>
-        <Incrementor value={estoque} />
+        <Incrementor
+          value={estoque}
+          setValue={(value) => {
+            value !== 0
+              ? setUpdateEstoqueProduct({
+                  ...updateEstoqueProduct,
+                  estoque: value,
+                  precoTotal: value * preco,
+                })
+              : handleDeleteProduct();
+          }}
+        />
         <CardText
           fontFamily="Bold"
           fontSize={14}
           color={light.colors.primary_orange}
         >
-          Total: R$ {totalPrice}
+          Total: R$ {precoTotal.toFixed(2)}
         </CardText>
       </Footer>
     </Container>
