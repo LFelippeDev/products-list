@@ -21,3 +21,8 @@ export const StyledScrollView = styled(ScrollView)``;
 export const Arrow = styled(Image)`
   flex: 1;
 `;
+
+export const LoadingContainer = styled(View)`
+  flex: 1;
+  justify-content: center;
+`;
