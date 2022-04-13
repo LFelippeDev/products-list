@@ -13,34 +13,45 @@ import {
 } from './styles';
 
 export const FormContainer = () => {
-  const { createProduct, setSearchFilter, filteredList } = useProducts();
+  const { createProduct, setSearchFilter, searchFilter } = useProducts();
   const [newNome, setNewNome] = useState<IField>({
     value: '',
     isInvalid: false,
   });
   const [newEstoque, setNewEstoque] = useState<IField>({
-    value: 0,
+    value: '',
     isInvalid: false,
   });
   const [newPreco, setNewPreco] = useState<IField>({
-    value: 0,
+    value: '',
     isInvalid: false,
   });
-  const inSearching = !filteredList;
+  const inSearching = searchFilter === '';
 
   const validateNewProduct = useCallback(():
     | IProdutoNotCompleted
     | undefined => {
+    if (newNome.value === '') setNewNome({ ...newNome, isInvalid: true });
+    if (Number(newPreco.value) <= 0)
+      setNewPreco({ ...newPreco, isInvalid: true });
+    if (Number(newEstoque.value) <= 0)
+      setNewEstoque({ ...newEstoque, isInvalid: true });
+    if (
+      newNome.value === '' ||
+      Number(newPreco.value) <= 0 ||
+      Number(newEstoque.value) <= 0
+    )
+      return;
     if (
       typeof newNome.value === 'string' &&
-      typeof newPreco.value === 'number' &&
-      typeof newEstoque.value === 'number'
+      typeof Number(newPreco.value) === 'number' &&
+      typeof Number(newEstoque.value) === 'number'
     ) {
       return {
         nome: newNome.value,
-        estoque: newEstoque.value,
-        preco: newPreco.value,
-        precoTotal: newEstoque.value * newPreco.value,
+        estoque: Number(newEstoque.value),
+        preco: Number(newPreco.value),
+        precoTotal: Number(newEstoque.value) * Number(newPreco.value),
       };
     }
     return;
@@ -50,14 +61,17 @@ export const FormContainer = () => {
     const validNewProduct = validateNewProduct();
     if (!validNewProduct) return;
     createProduct(validNewProduct);
+    setNewNome({ value: '', isInvalid: false });
+    setNewEstoque({ value: '', isInvalid: false });
+    setNewPreco({ value: '', isInvalid: false });
   }, [validateNewProduct]);
 
   const handleFieldValue = useCallback(
-    (setState: (value: IField) => void, value: string | number) => {
-      typeof value === 'number'
-        ? setState({ value, isInvalid: value <= 0 ? true : false })
-        : setState({ value, isInvalid: value === '' ? true : false });
-    },
+    (setState: (value: IField) => void, value: string) =>
+      setState({
+        value,
+        isInvalid: value === '' || Number(value) === 0 ? true : false,
+      }),
     []
   );
 
@@ -75,6 +89,7 @@ export const FormContainer = () => {
             label="Nome"
             placeholder="Digite um nome"
             onChangeText={(value) => handleFieldValue(setNewNome, value)}
+            value={newNome.value}
             isInvalid={newNome.isInvalid}
           />
           <ContainerFooter>
@@ -82,18 +97,16 @@ export const FormContainer = () => {
               label="Quantidade em Estoque"
               placeholder="Estoque"
               keyboardType="numeric"
-              onChangeText={(value) =>
-                handleFieldValue(setNewEstoque, Number(value))
-              }
+              onChangeText={(value) => handleFieldValue(setNewEstoque, value)}
+              value={newEstoque.value}
               isInvalid={newEstoque.isInvalid}
             />
             <FormInput
               label="Preço"
               placeholder="R$"
               keyboardType="numeric"
-              onChangeText={(value) =>
-                handleFieldValue(setNewPreco, Number(value))
-              }
+              onChangeText={(value) => handleFieldValue(setNewPreco, value)}
+              value={newPreco.value}
               isInvalid={newPreco.isInvalid}
             />
           </ContainerFooter>
