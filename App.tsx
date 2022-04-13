@@ -1,5 +1,6 @@
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
+import { ProductsProvider } from './src/context/products';
 import Home from './src/pages/Home';
 import { light } from './src/styles/themes';
 import {
@@ -17,8 +18,10 @@ export default function App() {
   if (!loadedFonts) return null;
 
   return (
-    <ThemeProvider theme={light}>
-      <Home />
-    </ThemeProvider>
+    <ProductsProvider>
+      <ThemeProvider theme={light}>
+        <Home />
+      </ThemeProvider>
+    </ProductsProvider>
   );
 }

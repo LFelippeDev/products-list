@@ -54,7 +54,8 @@ const setAvailableIds = async (idAvailable: number) => {
 
     let unparsedValue: number[] = JSON.parse(response);
     unparsedValue.push(idAvailable);
-    await AsyncStorage.setItem('@available_Ids', JSON.stringify(unparsedValue));
+    const sortedValues = unparsedValue.sort();
+    await AsyncStorage.setItem('@available_Ids', JSON.stringify(sortedValues));
     return;
   } catch (e) {
     console.log(e);
@@ -121,10 +122,10 @@ const updateProduct = async (value: IProduto) => {
       (product) => product.id === value.id
     );
     unparsedValue[indexUpdateProduct] = value;
-    const parsedValue = JSON.stringify(unparsedValue);
 
-    await AsyncStorage.setItem('@products_List', parsedValue);
-    return true;
+    await AsyncStorage.setItem('@products_List', JSON.stringify(unparsedValue));
+
+    return unparsedValue;
   } catch (e) {
     console.log(e);
   }
