@@ -7,13 +7,19 @@ interface ICardTextProps {
   fontFamily: string;
 }
 
-export const Container = styled(View)`
+interface IContainer {
+  isActive?: boolean;
+}
+
+export const Container = styled(TouchableOpacity)<IContainer>`
   margin-bottom: 8px;
   border-radius: 20px;
+  margin: 5px 15px;
   padding: 10px;
   background: ${({ theme }) => theme.colors.white};
   display: flex;
   justify-content: space-between;
+  elevation: ${({ isActive }) => (isActive ? 10 : 0)};
 `;
 
 export const Header = styled(View)`

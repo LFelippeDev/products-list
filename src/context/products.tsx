@@ -22,6 +22,7 @@ const ProductsContext = createContext<IProductsContext>({
   updateProduct: () => {},
   setSearchFilter: () => {},
   setOrderList: () => {},
+  setCustomOrderedList: () => {},
 });
 
 export const ProductsProvider: React.FC = ({ children }) => {
@@ -51,6 +52,15 @@ export const ProductsProvider: React.FC = ({ children }) => {
     [setProductsList]
   );
 
+  const setCustomOrderedList = useCallback(
+    async (newOrderList: IProduto[]) => {
+      setFilteredList(newOrderList);
+      const response = await ManagementList.setOrderList(newOrderList);
+      if (response) setProductsList(newOrderList);
+    },
+    [productsList]
+  );
+
   const updateProduct = useCallback(
     async (product: IProduto) => {
       const response = await ManagementList.updateProduct(product);
@@ -59,33 +69,18 @@ export const ProductsProvider: React.FC = ({ children }) => {
     [productsList]
   );
 
-  const sortList = useCallback(
-    (list: IProduto[]) => {
-      switch (orderList) {
-        case IOrderList.id:
-          return list.sort((a, b) => a.id - b.id);
-        case IOrderList.nome:
-          return list.sort((a, b) => {
-            if (a.nome > b.nome) return -1;
-            if (a.nome < b.nome) return 1;
-            return 0;
-          });
-        case IOrderList.preco:
-          return list.sort((a, b) => a.preco - b.preco);
-        case IOrderList.precoTotal:
-          return list.sort((a, b) => a.precoTotal - b.precoTotal);
-        case IOrderList.estoque:
-          return list.sort((a, b) => a.estoque - b.estoque);
-        default:
-          return list;
-      }
-    },
-    [orderList]
-  );
+  const getProductsByParams = useCallback(async () => {
+    const response = await ManagementList.getSortProductsByParams(orderList);
+    if (response) setProductsList(response);
+  }, [orderList]);
 
   useEffect(() => {
     getProducts();
   }, []);
+
+  useEffect(() => {
+    getProductsByParams();
+  }, [orderList]);
 
   useEffect(() => {
     setFilteredList(
@@ -101,11 +96,9 @@ export const ProductsProvider: React.FC = ({ children }) => {
   }, [searchFilter]);
 
   useEffect(() => {
-    setFilteredList(() => {
-      if (!productsList) return;
-      return sortList(productsList);
-    });
-  }, [orderList, productsList]);
+    if (!productsList) return;
+    setFilteredList(productsList);
+  }, [productsList]);
 
   return (
     <ProductsContext.Provider
@@ -119,6 +112,7 @@ export const ProductsProvider: React.FC = ({ children }) => {
         updateProduct,
         setSearchFilter,
         setOrderList,
+        setCustomOrderedList,
       }}
     >
       {children}
@@ -137,6 +131,7 @@ export const useProducts = () => {
     updateProduct,
     setSearchFilter,
     setOrderList,
+    setCustomOrderedList,
   } = context;
 
   return {
@@ -148,5 +143,6 @@ export const useProducts = () => {
     updateProduct,
     setSearchFilter,
     setOrderList,
+    setCustomOrderedList,
   };
 };

@@ -1,12 +1,11 @@
 import styled from 'styled-components';
-import { View, ScrollView, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-export const Container = styled(View)`
+export const Container = styled(GestureHandlerRootView)`
   flex: 1;
-  padding: 25px;
+  padding: 10px;
   background: ${({ theme }) => theme.colors.secundary_orange};
-  border-top-right-radius: 50px;
-  border-top-left-radius: 50px;
 `;
 
 export const OrderContainer = styled(TouchableOpacity)`
@@ -14,6 +13,7 @@ export const OrderContainer = styled(TouchableOpacity)`
   flex-direction: row;
   align-items: center;
   margin-bottom: 10px;
+  margin-left: 15px;
 `;
 
 export const OrderText = styled(Text)`
@@ -22,8 +22,6 @@ export const OrderText = styled(Text)`
   font-size: 14px;
   margin-right: 5px;
 `;
-
-export const StyledScrollView = styled(ScrollView)``;
 
 export const LoadingContainer = styled(View)`
   flex: 1;

@@ -32,6 +32,7 @@ export interface IProductsContext {
   updateProduct: (product: IProduto) => void;
   setSearchFilter: (value: string) => void;
   setOrderList: (order: IOrderList) => void;
+  setCustomOrderedList: (newOrderList: IProduto[]) => void;
 }
 
 export interface IField {

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Image } from 'react-native';
+import { GestureResponderEvent, Image } from 'react-native';
 import { IProduto } from '../../interfaces/interfaces';
 import { Incrementor } from '../Incrementor';
 import {
@@ -17,9 +17,15 @@ import { Alert } from 'react-native';
 
 interface IProductCardProps {
   produto: IProduto;
+  isActive?: boolean;
+  onLongPress?: (event: GestureResponderEvent) => void;
 }
 
-export const ProductCard = ({ produto }: IProductCardProps) => {
+export const ProductCard = ({
+  produto,
+  onLongPress,
+  isActive,
+}: IProductCardProps) => {
   const { deleteProduct, updateProduct } = useProducts();
   const [updateEstoqueProduct, setUpdateEstoqueProduct] =
     useState<IProduto>(produto);
@@ -47,7 +53,7 @@ export const ProductCard = ({ produto }: IProductCardProps) => {
   }, [estoque]);
 
   return (
-    <Container>
+    <Container onLongPress={onLongPress} isActive={isActive}>
       <Header>
         <CardText fontFamily="Medium" fontSize={12}>
           {`#${id}`}

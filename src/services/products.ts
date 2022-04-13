@@ -1,5 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { IProduto, IProdutoNotCompleted } from '../interfaces/interfaces';
+import {
+  IOrderList,
+  IProduto,
+  IProdutoNotCompleted,
+} from '../interfaces/interfaces';
 
 const initAppStorage = async () => {
   const createdProductsList = await AsyncStorage.getItem('@products_List');
@@ -62,6 +66,18 @@ const setAvailableIds = async (idAvailable: number) => {
   }
 };
 
+const setOrderList = async (newOrderedList: IProduto[]) => {
+  try {
+    await AsyncStorage.setItem(
+      '@available_Ids',
+      JSON.stringify(newOrderedList)
+    );
+    return newOrderedList;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 const getProducts = async (): Promise<IProduto[] | undefined> => {
   try {
     const response = await AsyncStorage.getItem('@products_List');
@@ -71,6 +87,38 @@ const getProducts = async (): Promise<IProduto[] | undefined> => {
     }
 
     return JSON.parse(response);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+const getSortProductsByParams = async (
+  order: IOrderList
+): Promise<IProduto[] | undefined> => {
+  try {
+    const response = await AsyncStorage.getItem('@products_List');
+    if (!response) return;
+
+    const unparsedValue: IProduto[] = JSON.parse(response);
+
+    switch (order) {
+      case IOrderList.id:
+        return unparsedValue.sort((a, b) => a.id - b.id);
+      case IOrderList.nome:
+        return unparsedValue.sort((a, b) => {
+          if (a.nome > b.nome) return -1;
+          if (a.nome < b.nome) return 1;
+          return 0;
+        });
+      case IOrderList.preco:
+        return unparsedValue.sort((a, b) => a.preco - b.preco);
+      case IOrderList.precoTotal:
+        return unparsedValue.sort((a, b) => a.precoTotal - b.precoTotal);
+      case IOrderList.estoque:
+        return unparsedValue.sort((a, b) => a.estoque - b.estoque);
+      default:
+        return unparsedValue;
+    }
   } catch (e) {
     console.log(e);
   }
@@ -134,7 +182,9 @@ const updateProduct = async (value: IProduto) => {
 export default {
   initAppStorage,
   addProduct,
+  setOrderList,
   deleteProduct,
   updateProduct,
   getProducts,
+  getSortProductsByParams,
 };

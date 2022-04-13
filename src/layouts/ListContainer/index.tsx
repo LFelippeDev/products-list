@@ -1,19 +1,24 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Image } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, Image, StyleSheet } from 'react-native';
+import DraggableFlatList, {
+  ScaleDecorator,
+  useOnCellActiveAnimation,
+} from 'react-native-draggable-flatlist';
+import Animated from 'react-native-reanimated';
 import { OrderModal } from '../../components/OrderModal';
 import { ProductCard } from '../../components/ProductCard';
 import { useProducts } from '../../context/products';
+import { IOrderList, IProduto } from '../../interfaces/interfaces';
 import ManagementList from '../../services/products';
 import {
   Container,
   LoadingContainer,
   OrderContainer,
   OrderText,
-  StyledScrollView,
 } from './styles';
 
 export const ListContainer = () => {
-  const { filteredList, orderList } = useProducts();
+  const { filteredList, orderList, setCustomOrderedList } = useProducts();
   const [modalIsVisible, setModalIsVisible] = useState<boolean>(false);
   const [loadStorageUser, setLoadStorageUser] = useState<boolean>(false);
 
@@ -26,16 +31,26 @@ export const ListContainer = () => {
     isLoadedStorage();
   }, []);
 
-  const ProductsList = useMemo(
-    () => (
-      <StyledScrollView>
-        {filteredList &&
-          filteredList.map((item) => (
-            <ProductCard key={item.id} produto={item} />
-          ))}
-      </StyledScrollView>
-    ),
-    [orderList, filteredList]
+  const ProductItemRender = useCallback(
+    (product: IProduto, drag: () => void) => {
+      const { isActive } = useOnCellActiveAnimation();
+
+      if (orderList === IOrderList.ordenar)
+        return (
+          <ScaleDecorator>
+            <Animated.View>
+              <ProductCard
+                produto={product}
+                onLongPress={drag}
+                isActive={isActive}
+              />
+            </Animated.View>
+          </ScaleDecorator>
+        );
+
+      return <ProductCard produto={product} />;
+    },
+    [orderList]
   );
 
   return (
@@ -46,8 +61,13 @@ export const ListContainer = () => {
           <Image source={require('./img/arrow.png')} />
         </OrderContainer>
       )}
-      {loadStorageUser ? (
-        ProductsList
+      {loadStorageUser && filteredList ? (
+        <DraggableFlatList
+          data={filteredList}
+          keyExtractor={(item) => item.id.toString()}
+          onDragEnd={({ data }) => setCustomOrderedList(data)}
+          renderItem={({ item, drag }) => ProductItemRender(item, drag)}
+        />
       ) : (
         <LoadingContainer>
           <ActivityIndicator size="large" color="#FE8235" />
