@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import styled from 'styled-components';
 
 interface ICardTextProps {
@@ -47,7 +47,7 @@ export const CardText = styled(Text)<ICardTextProps>`
   margin-right: 5px;
 `;
 
-export const DeleteProductText = styled(View)`
+export const DeleteProductText = styled(TouchableOpacity)`
   display: flex;
   flex-direction: row;
 `;

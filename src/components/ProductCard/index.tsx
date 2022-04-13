@@ -52,12 +52,11 @@ export const ProductCard = ({ produto }: IProductCardProps) => {
         <CardText fontFamily="Medium" fontSize={12}>
           {`#${id}`}
         </CardText>
-        <DeleteProductText>
+        <DeleteProductText onPress={() => handleDeleteProduct()}>
           <CardText
             fontFamily="Medium"
             fontSize={12}
             color={light.colors.delete_product_text}
-            onPress={() => handleDeleteProduct()}
           >
             Excluir Produto
           </CardText>
