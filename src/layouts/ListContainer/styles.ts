@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { View, ScrollView, Text, Image } from 'react-native';
+import { View, ScrollView, Text, TouchableOpacity } from 'react-native';
 
 export const Container = styled(View)`
   flex: 1;
@@ -9,7 +9,7 @@ export const Container = styled(View)`
   border-top-left-radius: 50px;
 `;
 
-export const OrderContainer = styled(View)`
+export const OrderContainer = styled(TouchableOpacity)`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -24,10 +24,6 @@ export const OrderText = styled(Text)`
 `;
 
 export const StyledScrollView = styled(ScrollView)``;
-
-export const Arrow = styled(Image)`
-  flex: 1;
-`;
 
 export const LoadingContainer = styled(View)`
   flex: 1;

@@ -7,7 +7,7 @@ export interface IProduto {
 }
 
 export enum IOrderList {
-  ordenar = 'Ordenar',
+  ordenar = 'Ordenação Customizável',
   id = 'Id',
   nome = 'Nome',
   preco = 'Preço',
@@ -25,13 +25,16 @@ export interface IProdutoNotCompleted {
 export interface IProductsContext {
   productsList?: IProduto[];
   filteredList?: IProduto[];
+  orderList: IOrderList;
+  searchFilter: string;
   deleteProduct: (id: number) => void;
   createProduct: (product: IProdutoNotCompleted) => void;
   updateProduct: (product: IProduto) => void;
   setSearchFilter: (value: string) => void;
+  setOrderList: (order: IOrderList) => void;
 }
 
 export interface IField {
-  value: string | number;
+  value: string;
   isInvalid: boolean;
 }
