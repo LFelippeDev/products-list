@@ -9,11 +9,18 @@ export const Container = styled(View)`
   border-top-left-radius: 50px;
 `;
 
+export const OrderContainer = styled(View)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+`;
+
 export const OrderText = styled(Text)`
   color: ${({ theme }) => theme.colors.list_text};
   font-family: 'Bold';
   font-size: 14px;
-  margin-bottom: 10px;
+  margin-right: 5px;
 `;
 
 export const StyledScrollView = styled(ScrollView)``;

@@ -1,7 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { Image } from 'react-native';
 import { IProduto } from '../../interfaces/interfaces';
 import { Incrementor } from '../Incrementor';
-import { CardText, Container, Divisor, Footer, Header, Main } from './styles';
+import {
+  CardText,
+  Container,
+  DeleteProductText,
+  Divisor,
+  Footer,
+  Header,
+  Main,
+} from './styles';
 import { light } from '../../styles/themes';
 import { useProducts } from '../../context/products';
 import { Alert } from 'react-native';
@@ -11,7 +20,7 @@ interface IProductCardProps {
 }
 
 export const ProductCard = ({ produto }: IProductCardProps) => {
-  const { deleteProduct, updateProduct, productsList } = useProducts();
+  const { deleteProduct, updateProduct } = useProducts();
   const [updateEstoqueProduct, setUpdateEstoqueProduct] =
     useState<IProduto>(produto);
   const { id, nome, estoque, preco, precoTotal } = updateEstoqueProduct;
@@ -43,14 +52,17 @@ export const ProductCard = ({ produto }: IProductCardProps) => {
         <CardText fontFamily="Medium" fontSize={12}>
           {`#${id}`}
         </CardText>
-        <CardText
-          fontFamily="Medium"
-          fontSize={12}
-          color={light.colors.delete_product_text}
-          onPress={() => handleDeleteProduct()}
-        >
-          Excluir Produto
-        </CardText>
+        <DeleteProductText>
+          <CardText
+            fontFamily="Medium"
+            fontSize={12}
+            color={light.colors.delete_product_text}
+            onPress={() => handleDeleteProduct()}
+          >
+            Excluir Produto
+          </CardText>
+          <Image source={require('./img/trash.png')} />
+        </DeleteProductText>
       </Header>
       <Main>
         <CardText fontFamily="Bold" fontSize={16}>

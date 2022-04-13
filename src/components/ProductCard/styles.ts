@@ -44,4 +44,10 @@ export const CardText = styled(Text)<ICardTextProps>`
   font-size: ${({ fontSize }) => fontSize}px;
   color: ${({ color, theme }) => color || theme.colors.list_text};
   font-family: ${({ fontFamily }) => fontFamily};
+  margin-right: 5px;
+`;
+
+export const DeleteProductText = styled(View)`
+  display: flex;
+  flex-direction: row;
 `;
