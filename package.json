@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@expo-google-fonts/epilogue": "^0.2.2",
-    "@react-native-async-storage/async-storage": "^1.17.3",
+    "@react-native-async-storage/async-storage": "~1.15.0",
     "@types/styled-components": "^5.1.25",
     "expo": "~44.0.0",
     "expo-status-bar": "~1.2.0",
