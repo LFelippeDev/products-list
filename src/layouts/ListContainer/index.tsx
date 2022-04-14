@@ -5,11 +5,11 @@ import DraggableFlatList, {
   useOnCellActiveAnimation,
 } from 'react-native-draggable-flatlist';
 import Animated from 'react-native-reanimated';
+import { AlertWithoutData } from '../../components/AlertWithoutData';
 import { OrderModal } from '../../components/OrderModal';
 import { ProductCard } from '../../components/ProductCard';
 import { useProducts } from '../../context/products';
 import { IOrderList, IProduto } from '../../interfaces/interfaces';
-import ManagementList from '../../services/products';
 import {
   Container,
   LoadingContainer,
@@ -18,18 +18,11 @@ import {
 } from './styles';
 
 export const ListContainer = () => {
-  const { filteredList, orderList, setCustomOrderedList } = useProducts();
+  const { filteredList, orderList, setCustomOrderedList, searchFilter } =
+    useProducts();
   const [modalIsVisible, setModalIsVisible] = useState<boolean>(false);
-  const [loadStorageUser, setLoadStorageUser] = useState<boolean>(false);
 
-  const isLoadedStorage = useCallback(async () => {
-    const response = await ManagementList.initAppStorage();
-    if (response) setLoadStorageUser(response);
-  }, []);
-
-  useEffect(() => {
-    isLoadedStorage();
-  }, []);
+  const inSearching = searchFilter === '';
 
   const ProductItemRender = useCallback(
     (product: IProduto, drag: () => void) => {
@@ -55,13 +48,18 @@ export const ListContainer = () => {
 
   return (
     <Container>
-      {loadStorageUser && (
-        <OrderContainer onPress={() => setModalIsVisible(true)}>
-          <OrderText>{orderList}</OrderText>
-          <Image source={require('./img/arrow.png')} />
-        </OrderContainer>
-      )}
-      {loadStorageUser && filteredList ? (
+      <OrderContainer onPress={() => setModalIsVisible(true)}>
+        <OrderText>{orderList}</OrderText>
+        <Image source={require('./img/arrow.png')} />
+      </OrderContainer>
+      {filteredList?.length === 0 &&
+        (inSearching ? (
+          <AlertWithoutData text="Lista vazia, insira um produto." />
+        ) : (
+          <AlertWithoutData text="Produto não encontrado." />
+        ))}
+
+      {filteredList ? (
         <DraggableFlatList
           data={filteredList}
           keyExtractor={(item) => item.id.toString()}
