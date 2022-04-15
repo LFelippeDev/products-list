@@ -26,20 +26,22 @@ const ProductsContext = createContext<IProductsContext>({
 });
 
 export const ProductsProvider: React.FC = ({ children }) => {
-  const [productsList, setProductsList] = useState<IProduto[]>();
-  const [filteredList, setFilteredList] = useState<IProduto[]>();
+  const [productsList, setProductsList] = useState<IProduto[]>([]);
+  const [filteredList, setFilteredList] = useState<IProduto[]>([]);
   const [orderList, setOrderList] = useState<IOrderList>(IOrderList.ordenar);
   const [searchFilter, setSearchFilter] = useState<string>('');
 
   const getProducts = useCallback(async () => {
     const response = await ManagementList.getProducts();
-    if (response) setProductsList(response);
+    if (response instanceof Error) console.log(response.message);
+    if (response && !(response instanceof Error)) setProductsList(response);
   }, [productsList]);
 
   const deleteProduct = useCallback(
     async (productId: number) => {
       const response = await ManagementList.deleteProduct(productId);
-      if (response) setProductsList(response);
+      if (response instanceof Error) console.log(response.message);
+      if (response && !(response instanceof Error)) setProductsList(response);
     },
     [setProductsList]
   );
@@ -47,7 +49,8 @@ export const ProductsProvider: React.FC = ({ children }) => {
   const createProduct = useCallback(
     async (addProduct: IProdutoNotCompleted) => {
       const response = await ManagementList.addProduct(addProduct);
-      if (response) setProductsList(response);
+      if (response instanceof Error) console.log(response.message);
+      if (response && !(response instanceof Error)) setProductsList(response);
     },
     [setProductsList]
   );
@@ -64,14 +67,16 @@ export const ProductsProvider: React.FC = ({ children }) => {
   const updateProduct = useCallback(
     async (product: IProduto) => {
       const response = await ManagementList.updateProduct(product);
-      if (response) setProductsList(response);
+      if (response instanceof Error) console.log(response.message);
+      if (response && !(response instanceof Error)) setProductsList(response);
     },
     [productsList]
   );
 
   const getProductsByParams = useCallback(async () => {
     const response = await ManagementList.getSortProductsByParams(orderList);
-    if (response) setProductsList(response);
+    if (response instanceof Error) console.log(response.message);
+    if (response && !(response instanceof Error)) setFilteredList(response);
   }, [orderList]);
 
   useEffect(() => {
@@ -97,7 +102,10 @@ export const ProductsProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     if (!productsList) return;
-    setFilteredList(productsList);
+
+    orderList !== IOrderList.ordenar
+      ? getProductsByParams()
+      : setFilteredList(productsList);
   }, [productsList]);
 
   return (

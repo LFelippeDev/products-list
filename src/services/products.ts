@@ -5,27 +5,56 @@ import {
   IProdutoNotCompleted,
 } from '../interfaces/interfaces';
 
-const initAppStorage = async () => {
-  const createdProductsList = await AsyncStorage.getItem('@products_List');
-  if (!createdProductsList)
-    await AsyncStorage.setItem('@products_List', JSON.stringify([]));
-  const createdAvailableIds = await AsyncStorage.getItem('@available_Ids');
-  if (!createdAvailableIds)
-    await AsyncStorage.setItem('@available_Ids', JSON.stringify([]));
-  // await AsyncStorage.clear();
-  return true;
-};
+type ResponseRequests = Promise<IProduto[] | undefined | Error>;
 
-const addProduct = async (value: IProdutoNotCompleted) => {
+const addProduct = async (value: IProdutoNotCompleted): ResponseRequests => {
   try {
-    const responseProducts = await AsyncStorage.getItem('@products_List');
-    if (!responseProducts) return;
+    const { estoque, nome, preco, precoTotal } = value;
+    if (nome === '')
+      throw new Error('Insira um nome válido.', {
+        cause: {
+          name: 'incorrectParam',
+          message: 'A propriedade nome deve existir.',
+        },
+      });
+    if (estoque === 0)
+      throw new Error('Insira um estoque válido.', {
+        cause: {
+          name: 'incorrectParam',
+          message: 'A propriedade estoque deve ser maior que 0.',
+        },
+      });
+    if (preco === 0)
+      throw new Error('Insira um preço válido.', {
+        cause: {
+          name: 'incorrectParam',
+          message: 'A propriedade preco deve ser maior que 0.',
+        },
+      });
+    if (precoTotal !== preco * estoque)
+      throw new Error('Insira um preço total válido.', {
+        cause: {
+          name: 'incorrectParam',
+          message:
+            'O nome precoTotal deve ser, o preco do produto multiplicado pelo estoque.',
+        },
+      });
 
-    let unparsedProducts = JSON.parse(responseProducts);
+    const responseProducts = await AsyncStorage.getItem('@products_List');
+    let unparsedProducts: IProduto[] = [];
+    if (responseProducts) unparsedProducts = JSON.parse(responseProducts);
 
     let responseIds = await getAvailableIds();
-    if (!responseIds) return;
+    if (!responseIds) responseIds = [];
+
     const firstAvailableId = responseIds[0];
+    if (typeof firstAvailableId !== 'number')
+      throw new Error('Id esta incorreto.', {
+        cause: {
+          name: 'incorrectParam',
+          message: 'O id deve ser do tipo number.',
+        },
+      });
 
     if (responseIds.length > 0) {
       unparsedProducts.push({ id: firstAvailableId, ...value });
@@ -37,26 +66,21 @@ const addProduct = async (value: IProdutoNotCompleted) => {
       '@products_List',
       JSON.stringify(unparsedProducts)
     );
+
     return unparsedProducts;
-  } catch (e) {
-    console.log(e);
+  } catch (error: any) {
+    const treatedError: Error = error;
+    return treatedError;
   }
 };
 
 const setAvailableIds = async (idAvailable: number) => {
   try {
     const response = await AsyncStorage.getItem('@available_Ids');
-    if (!response) return;
 
-    if (response.length === 0) {
-      await AsyncStorage.setItem(
-        '@available_Ids',
-        JSON.stringify([idAvailable])
-      );
-      return;
-    }
+    let unparsedValue: Number[] = [];
+    if (response) unparsedValue = JSON.parse(response);
 
-    let unparsedValue: number[] = JSON.parse(response);
     unparsedValue.push(idAvailable);
     const sortedValues = unparsedValue.sort();
     await AsyncStorage.setItem('@available_Ids', JSON.stringify(sortedValues));
@@ -82,9 +106,7 @@ const getProducts = async (): Promise<IProduto[] | undefined> => {
   try {
     const response = await AsyncStorage.getItem('@products_List');
 
-    if (!response) {
-      return;
-    }
+    if (!response) return [];
 
     return JSON.parse(response);
   } catch (e) {
@@ -92,12 +114,10 @@ const getProducts = async (): Promise<IProduto[] | undefined> => {
   }
 };
 
-const getSortProductsByParams = async (
-  order: IOrderList
-): Promise<IProduto[] | undefined> => {
+const getSortProductsByParams = async (order: IOrderList): ResponseRequests => {
   try {
     const response = await AsyncStorage.getItem('@products_List');
-    if (!response) return;
+    if (!response) return [];
 
     const unparsedValue: IProduto[] = JSON.parse(response);
 
@@ -106,8 +126,8 @@ const getSortProductsByParams = async (
         return unparsedValue.sort((a, b) => a.id - b.id);
       case IOrderList.nome:
         return unparsedValue.sort((a, b) => {
-          if (a.nome > b.nome) return -1;
-          if (a.nome < b.nome) return 1;
+          if (a.nome < b.nome) return -1;
+          if (a.nome > b.nome) return 1;
           return 0;
         });
       case IOrderList.preco:
@@ -124,13 +144,11 @@ const getSortProductsByParams = async (
   }
 };
 
-const getAvailableIds = async (): Promise<number[] | undefined> => {
+const getAvailableIds = async () => {
   try {
     const response = await AsyncStorage.getItem('@available_Ids');
 
-    if (!response) {
-      return;
-    }
+    if (!response) return [];
 
     return JSON.parse(response);
   } catch (e) {
@@ -138,12 +156,22 @@ const getAvailableIds = async (): Promise<number[] | undefined> => {
   }
 };
 
-const deleteProduct = async (idProduct: number) => {
+const deleteProduct = async (idProduct: number): ResponseRequests => {
   try {
     const response = await AsyncStorage.getItem('@products_List');
-    if (!response) return;
+
+    if (!response) return [];
 
     const unparsedValue: IProduto[] = JSON.parse(response);
+
+    if (!unparsedValue.find((product) => product.id === idProduct))
+      throw new Error('Esse produto não existe.', {
+        cause: {
+          name: 'notFound',
+          message: 'O id não foi encontrado.',
+        },
+      });
+
     const listWithoutDeleteProduct = unparsedValue.filter(
       (product) => product.id !== idProduct
     );
@@ -155,17 +183,58 @@ const deleteProduct = async (idProduct: number) => {
     setAvailableIds(idProduct);
 
     return listWithoutDeleteProduct;
-  } catch (e) {
-    console.log(e);
+  } catch (error: any) {
+    const treatedError: Error = error;
+    return treatedError;
   }
 };
 
-const updateProduct = async (value: IProduto) => {
+const updateProduct = async (value: IProduto): ResponseRequests => {
   try {
+    const { estoque, nome, preco, precoTotal } = value;
+    if (nome === '')
+      throw new Error('Insira um nome válido.', {
+        cause: {
+          name: 'incorrectParam',
+          message: 'A propriedade nome deve existir.',
+        },
+      });
+    if (estoque === 0)
+      throw new Error('Insira um estoque válido.', {
+        cause: {
+          name: 'incorrectParam',
+          message: 'A propriedade estoque deve ser maior que 0.',
+        },
+      });
+    if (preco === 0)
+      throw new Error('Insira um preço válido.', {
+        cause: {
+          name: 'incorrectParam',
+          message: 'A propriedade preco deve ser maior que 0.',
+        },
+      });
+    if (precoTotal !== preco * estoque)
+      throw new Error('Insira um preço total válido.', {
+        cause: {
+          name: 'incorrectParam',
+          message:
+            'O nome precoTotal deve ser, o preco do produto multiplicado pelo estoque.',
+        },
+      });
+
     const response = await AsyncStorage.getItem('@products_List');
-    if (!response) return;
+    if (!response) return [];
 
     const unparsedValue: IProduto[] = JSON.parse(response);
+
+    if (!unparsedValue.find((product) => product.id === value.id))
+      throw new Error('Esse produto não existe.', {
+        cause: {
+          name: 'notFound',
+          message: 'O id não foi encontrado.',
+        },
+      });
+
     const indexUpdateProduct = unparsedValue.findIndex(
       (product) => product.id === value.id
     );
@@ -174,15 +243,16 @@ const updateProduct = async (value: IProduto) => {
     await AsyncStorage.setItem('@products_List', JSON.stringify(unparsedValue));
 
     return unparsedValue;
-  } catch (e) {
-    console.log(e);
+  } catch (error: any) {
+    const treatedError: Error = error;
+    return treatedError;
   }
 };
 
 export default {
-  initAppStorage,
   addProduct,
   setOrderList,
+  setAvailableIds,
   deleteProduct,
   updateProduct,
   getProducts,
