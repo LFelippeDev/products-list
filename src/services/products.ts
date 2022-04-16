@@ -48,7 +48,11 @@ const addProduct = async (value: IProdutoNotCompleted): ResponseRequests => {
     if (!responseIds) responseIds = [];
 
     const firstAvailableId = responseIds[0];
-    if (typeof firstAvailableId !== 'number')
+    const usedId = firstAvailableId
+      ? firstAvailableId
+      : unparsedProducts.length + 1;
+
+    if (typeof usedId !== 'number')
       throw new Error('Id esta incorreto.', {
         cause: {
           name: 'incorrectParam',
@@ -56,11 +60,12 @@ const addProduct = async (value: IProdutoNotCompleted): ResponseRequests => {
         },
       });
 
+    unparsedProducts.push({ id: usedId, ...value });
+
     if (responseIds.length > 0) {
-      unparsedProducts.push({ id: firstAvailableId, ...value });
       responseIds.shift();
       await AsyncStorage.setItem('@available_Ids', JSON.stringify(responseIds));
-    } else unparsedProducts.push({ id: unparsedProducts.length + 1, ...value });
+    }
 
     await AsyncStorage.setItem(
       '@products_List',
