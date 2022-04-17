@@ -60,16 +60,19 @@ export const FormContainer = () => {
   const addNewProduct = useCallback(() => {
     const validNewProduct = validateNewProduct();
     if (!validNewProduct) return;
-    createProduct(validNewProduct);
+    createProduct({
+      validNewProduct,
+      preco: validNewProduct.preco.replace(/[^0-9]/g, ''),
+    });
     setNewNome({ value: '', isInvalid: false });
     setNewEstoque({ value: '', isInvalid: false });
     setNewPreco({ value: '', isInvalid: false });
   }, [validateNewProduct]);
 
   const handleFieldValue = useCallback(
-    (setState: (value: IField) => void, value: string) =>
+    (setState: (value: IField) => void, value: string, isNumber?: boolean) =>
       setState({
-        value,
+        value: isNumber ? value.replace(/[^0-9]/g, '') : value,
         isInvalid: value === '' || Number(value) === 0 ? true : false,
       }),
     []
@@ -97,7 +100,9 @@ export const FormContainer = () => {
               label="Quantidade em Estoque"
               placeholder="Estoque"
               keyboardType="numeric"
-              onChangeText={(value) => handleFieldValue(setNewEstoque, value)}
+              onChangeText={(value) =>
+                handleFieldValue(setNewEstoque, value, true)
+              }
               value={newEstoque.value}
               isInvalid={newEstoque.isInvalid}
             />
@@ -105,7 +110,9 @@ export const FormContainer = () => {
               label="Preço"
               placeholder="R$"
               keyboardType="numeric"
-              onChangeText={(value) => handleFieldValue(setNewPreco, value)}
+              onChangeText={(value) =>
+                handleFieldValue(setNewPreco, value, true)
+              }
               value={newPreco.value}
               isInvalid={newPreco.isInvalid}
             />
