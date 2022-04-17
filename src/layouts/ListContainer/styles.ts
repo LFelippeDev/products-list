@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 export const Container = styled(GestureHandlerRootView)`
   flex: 1;
   padding: 10px;
+  padding-bottom: 40px;
   background: ${({ theme }) => theme.colors.secundary_orange};
 `;
 
