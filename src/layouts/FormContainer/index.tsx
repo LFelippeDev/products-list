@@ -32,7 +32,10 @@ export const FormContainer = () => {
     | IProdutoNotCompleted
     | undefined => {
     if (newNome.value === '') setNewNome({ ...newNome, isInvalid: true });
-    if (Number(newPreco.value) <= 0)
+    if (
+      Number(newPreco.value) <= 0 ||
+      typeof Number(newPreco.value) !== 'number'
+    )
       setNewPreco({ ...newPreco, isInvalid: true });
     if (Number(newEstoque.value) <= 0)
       setNewEstoque({ ...newEstoque, isInvalid: true });
@@ -60,10 +63,7 @@ export const FormContainer = () => {
   const addNewProduct = useCallback(() => {
     const validNewProduct = validateNewProduct();
     if (!validNewProduct) return;
-    createProduct({
-      validNewProduct,
-      preco: validNewProduct.preco.replace(/[^0-9]/g, ''),
-    });
+    createProduct(validNewProduct);
     setNewNome({ value: '', isInvalid: false });
     setNewEstoque({ value: '', isInvalid: false });
     setNewPreco({ value: '', isInvalid: false });
@@ -110,9 +110,7 @@ export const FormContainer = () => {
               label="Preço"
               placeholder="R$"
               keyboardType="numeric"
-              onChangeText={(value) =>
-                handleFieldValue(setNewPreco, value, true)
-              }
+              onChangeText={(value) => handleFieldValue(setNewPreco, value)}
               value={newPreco.value}
               isInvalid={newPreco.isInvalid}
             />
