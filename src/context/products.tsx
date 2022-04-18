@@ -88,6 +88,11 @@ export const ProductsProvider: React.FC = ({ children }) => {
   }, [orderList]);
 
   useEffect(() => {
+    if (searchFilter === '') {
+      setFilteredList(productsList);
+      return;
+    }
+
     setFilteredList(
       productsList?.filter((product) => {
         const lengthSearchFilter = searchFilter.length;
@@ -97,7 +102,6 @@ export const ProductsProvider: React.FC = ({ children }) => {
         );
       })
     );
-    if (searchFilter === '') setFilteredList(productsList);
   }, [searchFilter]);
 
   useEffect(() => {
